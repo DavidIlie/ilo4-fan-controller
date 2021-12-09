@@ -1,4 +1,5 @@
 import type { GetServerSideProps } from "next";
+import { useState } from "react";
 import { Formik, Form } from "formik";
 
 import Fan from "../components/Fan";
@@ -11,11 +12,19 @@ interface Props {
 
 const Home = ({ fans }: Props): JSX.Element => {
     let fanArray = [];
-    fans.forEach((fan) => fanArray.push(fan.CurrentReading));
+    let ogArray = [];
+
+    fans.forEach(
+        (fan) =>
+            fanArray.push(fan.CurrentReading) &&
+            ogArray.push(fan.CurrentReading)
+    );
+
+    const [editAll, setEditAll] = useState<boolean>(false);
 
     return (
         <div className="h-screen bg-gray-800 flex justify-center items-center text-white">
-            <div className="bg-gray-900 border-2 border-gray-700 shadow-xl hover:shadow-2xl duration-150 py-6 px-12 sm:max-w-xl w-full rounded container">
+            <div className="bg-gray-900 border-2 border-gray-700 shadow-xl duration-150 py-6 sm:px-12 sm:max-w-2xl w-full rounded container">
                 <div className="flex gap-4 items-center justify-center mb-6">
                     <img src="/ilo-logo.png" />
                     <h1 className="text-xl font-semibold">
@@ -41,16 +50,42 @@ const Home = ({ fans }: Props): JSX.Element => {
                                         index !== values.fans.length - 1 &&
                                         "mb-4"
                                     }`}
+                                    key={index}
                                 >
                                     <Fan
                                         data={fan}
-                                        key={index}
                                         index={index}
                                         values={values.fans}
                                         update={setFieldValue}
+                                        editAll={editAll}
                                     />
                                 </div>
                             ))}
+                            <div className="mt-6 flex items-center sm:gap-4 gap-2 justify-center w-full sm:px-0 px-4">
+                                <button
+                                    className="sm:w-auto w-full bg-blue-600 hover:bg-blue-700 duration-150 font-semibold text-blue-50 py-2 px-10 rounded"
+                                    onClick={() =>
+                                        setFieldValue("fans", ogArray)
+                                    }
+                                    type="button"
+                                >
+                                    Reset
+                                </button>
+                                <button
+                                    className={`sm:w-auto w-full bg-${
+                                        editAll ? "red" : "gray"
+                                    }-600 hover:bg-${
+                                        editAll ? "red" : "gray"
+                                    }-700 duration-150 font-semibold text-gray-50 py-2 px-10 rounded`}
+                                    onClick={() => setEditAll(!editAll)}
+                                    type="button"
+                                >
+                                    Edit All
+                                </button>
+                                <button className="sm:w-auto w-full bg-green-600 hover:bg-green-700 duration-150 font-semibold text-green-50 py-2 px-10 rounded">
+                                    Update
+                                </button>
+                            </div>
                         </Form>
                     )}
                 </Formik>
