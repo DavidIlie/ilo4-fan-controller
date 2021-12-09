@@ -6,7 +6,6 @@ interface Props {
 }
 
 const Home = ({ fans }: Props): JSX.Element => {
-    console.log(fans);
     return (
         <div className="h-screen bg-gray-800 flex justify-center items-center text-white">
             <div className="bg-gray-900 border-2 border-gray-700 shadow-xl hover:shadow-2xl duration-150 py-2 px-4 rounded">
