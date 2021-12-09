@@ -1,4 +1,5 @@
 import type { GetServerSideProps } from "next";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import { Formik, Form } from "formik";
 
@@ -22,9 +23,11 @@ const Home = ({ fans }: Props): JSX.Element => {
 
     const [editAll, setEditAll] = useState<boolean>(false);
 
+    const router = useRouter();
+
     return (
         <div className="h-screen bg-gray-800 flex justify-center items-center text-white">
-            <div className="bg-gray-900 border-2 border-gray-700 shadow-xl duration-150 py-6 sm:px-12 sm:max-w-2xl w-full rounded container">
+            <div className="bg-gray-900 border-2 border-gray-700 shadow-xl duration-150 pt-6 pb-4 sm:px-12 sm:max-w-2xl w-full rounded container">
                 <div className="flex gap-4 items-center justify-center mb-6">
                     <img src="/ilo-logo.png" />
                     <h1 className="text-xl font-semibold">
@@ -38,8 +41,19 @@ const Home = ({ fans }: Props): JSX.Element => {
                     initialValues={{
                         fans: fanArray,
                     }}
-                    onSubmit={async (data, { setSubmitting, resetForm }) => {
-                        console.log(data);
+                    onSubmit={async (data, { setSubmitting }) => {
+                        setSubmitting(true);
+
+                        const r = await fetch(`${router.basePath}/api/update`, {
+                            method: "POST",
+                            body: JSON.stringify(data),
+                            headers: { "Content-Type": "application/json" },
+                        });
+                        const response = await r.json();
+
+                        console.log(response);
+
+                        setSubmitting(false);
                     }}
                 >
                     {({ errors, isSubmitting, values, setFieldValue }) => (
@@ -83,9 +97,14 @@ const Home = ({ fans }: Props): JSX.Element => {
                                     Edit All
                                 </button>
                                 <button className="sm:w-auto w-full bg-green-600 hover:bg-green-700 duration-150 font-semibold text-green-50 py-2 px-10 rounded">
-                                    Update
+                                    {isSubmitting ? "Updating" : "Update"}
                                 </button>
                             </div>
+                            {errors.fans && (
+                                <h1 className="text-red-500 font-semibold text-lg mt-2">
+                                    {errors.fans}
+                                </h1>
+                            )}
                         </Form>
                     )}
                 </Formik>
