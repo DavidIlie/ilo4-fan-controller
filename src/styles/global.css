@@ -1,4 +1,4 @@
 input:checked ~ .dot {
     transform: translateX(100%);
-    @apply bg-blue-500;
+    @apply bg-cyan-600;
 }

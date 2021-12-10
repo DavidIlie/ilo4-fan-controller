@@ -52,7 +52,7 @@ const Home = ({ fans }: Props): JSX.Element => {
                 </div>
 
                 <label
-                    className="flex items-center cursor-pointer sm:mx-11 mx-[3.25rem] mb-2"
+                    className="flex items-center cursor-pointer w-fit sm:mx-11 mx-[3.25rem] my-3"
                     onClick={(e) => {
                         e.preventDefault();
                         setEditAll(!editAll);
@@ -64,8 +64,8 @@ const Home = ({ fans }: Props): JSX.Element => {
                             className="sr-only"
                             checked={editAll}
                         />
-                        <div className="w-10 h-4 bg-gray-400 rounded-full shadow-inner"></div>
-                        <div className="dot absolute w-6 h-6 bg-white rounded-full shadow -left-1 -top-1 transition"></div>
+                        <div className="w-10 h-4 bg-gray-800 rounded-full shadow-inner"></div>
+                        <div className="dot absolute w-6 h-6 bg-gray-500 rounded-full shadow -left-1 -top-1 transition"></div>
                     </div>
                     <div className="ml-3 text-white font-medium">Edit All</div>
                 </label>
