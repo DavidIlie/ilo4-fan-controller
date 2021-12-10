@@ -17,26 +17,19 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 kex: ["diffie-hellman-group14-sha1"],
             },
         }).then(async () => {
-            // for (let i = 0; i < body.fans.length; i++) {
-            //     const fanID = i + 1;
-            //     const value = body.fans[i];
+            for (let i = 0; i < body.fans.length; i++) {
+                const fanID = i;
+                const value = body.fans[i];
 
-            //     const speed = ((value as any as number) / 100) * 255;
+                const speed = ((value as any as number) / 100) * 255;
 
-            //     const command = await ssh.execCommand(`fan p ${fanID} min 25`);
+                await ssh.execCommand(`fan p ${fanID} lock ${speed}`);
 
-            //     const command2 = await ssh.execCommand(
-            //         `fan p ${fanID} max ${speed}`
-            //     );
-
-            //     console.log(command, command2);
-            // }
-
-            const speed = (body.fans[0] / 100) * 255;
-
-            const command = await ssh.execCommand(`fan p global lock ${speed}`);
-
-            console.log(command);
+                if (process.env.NODE_ENV === "development")
+                    console.log(
+                        `DEBUG: Change Fan ${fanID} to speed ${speed} (SUCCESS)`
+                    );
+            }
 
             ssh.dispose();
         });
