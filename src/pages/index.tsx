@@ -2,11 +2,11 @@ import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { Formik, Form } from "formik";
+import toast from "react-hot-toast";
 
 import Fan from "../components/Fan";
 import type { FanObject } from "../types/Fan";
 import { changeFanSpeedSchema } from "../schemas/changeFanSpeed";
-import toast from "react-hot-toast";
 
 interface Props {
     fans: FanObject[];
