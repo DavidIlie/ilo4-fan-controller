@@ -76,14 +76,8 @@ const Home = ({ fans }: Props): JSX.Element => {
                                 </div>
                             ))}
                             <div className="mt-6 flex items-center sm:gap-4 gap-2 justify-center w-full sm:px-0 px-4">
-                                <button
-                                    className="sm:w-auto w-full bg-cyan-600 hover:bg-cyan-700 duration-150 font-semibold text-blue-50 py-2 px-10 rounded"
-                                    onClick={() =>
-                                        setFieldValue("fans", ogArray)
-                                    }
-                                    type="button"
-                                >
-                                    Reset All
+                                <button className="sm:w-auto w-full bg-emerald-600 hover:bg-emerald-700 duration-150 font-semibold text-emerald-50 py-2 px-10 rounded">
+                                    {isSubmitting ? "Updating" : "Update"}
                                 </button>
                                 <button
                                     className={`sm:w-auto w-full bg-${
@@ -96,8 +90,14 @@ const Home = ({ fans }: Props): JSX.Element => {
                                 >
                                     Edit All
                                 </button>
-                                <button className="sm:w-auto w-full bg-emerald-600 hover:bg-emerald-700 duration-150 font-semibold text-emerald-50 py-2 px-10 rounded">
-                                    {isSubmitting ? "Updating" : "Update"}
+                                <button
+                                    className="sm:w-auto w-full bg-cyan-600 hover:bg-cyan-700 duration-150 font-semibold text-blue-50 py-2 px-10 rounded"
+                                    onClick={() =>
+                                        setFieldValue("fans", ogArray)
+                                    }
+                                    type="button"
+                                >
+                                    Reset All
                                 </button>
                             </div>
                             {errors.fans && (
