@@ -77,26 +77,26 @@ const Home = ({ fans }: Props): JSX.Element => {
                             ))}
                             <div className="mt-6 flex items-center sm:gap-4 gap-2 justify-center w-full sm:px-0 px-4">
                                 <button
-                                    className="sm:w-auto w-full bg-blue-600 hover:bg-blue-700 duration-150 font-semibold text-blue-50 py-2 px-10 rounded"
+                                    className="sm:w-auto w-full bg-cyan-600 hover:bg-cyan-700 duration-150 font-semibold text-blue-50 py-2 px-10 rounded"
                                     onClick={() =>
                                         setFieldValue("fans", ogArray)
                                     }
                                     type="button"
                                 >
-                                    Reset
+                                    Reset All
                                 </button>
                                 <button
                                     className={`sm:w-auto w-full bg-${
-                                        editAll ? "red" : "gray"
+                                        editAll ? "teal" : "sky"
                                     }-600 hover:bg-${
-                                        editAll ? "red" : "gray"
+                                        editAll ? "teal" : "sky"
                                     }-700 duration-150 font-semibold text-gray-50 py-2 px-10 rounded`}
                                     onClick={() => setEditAll(!editAll)}
                                     type="button"
                                 >
                                     Edit All
                                 </button>
-                                <button className="sm:w-auto w-full bg-green-600 hover:bg-green-700 duration-150 font-semibold text-green-50 py-2 px-10 rounded">
+                                <button className="sm:w-auto w-full bg-emerald-600 hover:bg-emerald-700 duration-150 font-semibold text-emerald-50 py-2 px-10 rounded">
                                     {isSubmitting ? "Updating" : "Update"}
                                 </button>
                             </div>
