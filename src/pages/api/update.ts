@@ -9,30 +9,30 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
         const ssh = new NodeSSH();
 
-        ssh.connect({
+        await ssh.connect({
             host: process.env.ILO_HOST,
             username: process.env.ILO_USERNAME,
             password: process.env.ILO_PASSWORD,
             algorithms: {
                 kex: ["diffie-hellman-group14-sha1"],
             },
-        }).then(async () => {
-            for (let i = 0; i < body.fans.length; i++) {
-                const fanID = i;
-                const value = body.fans[i];
-
-                const speed = ((value as any as number) / 100) * 255;
-
-                await ssh.execCommand(`fan p ${fanID} lock ${speed}`);
-
-                if (process.env.NODE_ENV === "development")
-                    console.log(
-                        `DEBUG: Change Fan ${fanID} to speed ${speed} (SUCCESS)`
-                    );
-            }
-            res.send("OK");
-            ssh.dispose();
         });
+
+        for (let i = 0; i < body.fans.length; i++) {
+            const fanID = i;
+            const value = body.fans[i];
+
+            const speed = ((value as any as number) / 100) * 255;
+
+            await ssh.execCommand(`fan p ${fanID} lock ${speed}`);
+
+            if (process.env.NODE_ENV === "development")
+                console.log(
+                    `DEBUG: Change Fan ${fanID} to speed ${speed} (SUCCESS)`
+                );
+        }
+        res.send("OK");
+        ssh.dispose();
     } catch (error) {
         res.status(400).json({ message: error.message });
     }

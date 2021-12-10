@@ -44,7 +44,7 @@ const Fan = ({
                 min="10"
                 max="100"
                 value={values[index]}
-                className="sm:w-72 w-48"
+                className="sm:w-[23rem] w-[13rem]"
                 onChange={HandleUpdate}
             />
             <input
@@ -59,7 +59,7 @@ const Fan = ({
             <button
                 type="button"
                 onClick={() => HandleUpdate(original as any, false)}
-                className="rounded bg-blue-800 hover:bg-blue-900 duration-150 px-4 py-1"
+                className="sm:block hidden rounded bg-blue-800 hover:bg-blue-900 duration-150 sm:px-4 px-2 py-1"
             >
                 Reset
             </button>
