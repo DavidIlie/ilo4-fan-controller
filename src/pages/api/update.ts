@@ -30,11 +30,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                         `DEBUG: Change Fan ${fanID} to speed ${speed} (SUCCESS)`
                     );
             }
-
+            res.send("OK");
             ssh.dispose();
         });
-
-        res.send(body);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }

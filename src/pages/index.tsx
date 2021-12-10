@@ -6,6 +6,7 @@ import { Formik, Form } from "formik";
 import Fan from "../components/Fan";
 import type { FanObject } from "../types/Fan";
 import { changeFanSpeedSchema } from "../schemas/changeFanSpeed";
+import toast from "react-hot-toast";
 
 interface Props {
     fans: FanObject[];
@@ -23,7 +24,22 @@ const Home = ({ fans }: Props): JSX.Element => {
 
     const [editAll, setEditAll] = useState<boolean>(false);
 
+    const [unlocking, setUnlocking] = useState<boolean>();
+
     const router = useRouter();
+
+    const HandleUnlock = async () => {
+        setUnlocking(true);
+        const r = await fetch(`${router.basePath}/api/unlock`);
+        const response = await r.json();
+
+        if (r.status === 200) {
+            toast.success("Updated successfully!");
+        } else {
+            toast.error(response.message);
+        }
+        setUnlocking(false);
+    };
 
     return (
         <div className="h-screen bg-gray-800 flex justify-center items-center text-white">
@@ -34,6 +50,26 @@ const Home = ({ fans }: Props): JSX.Element => {
                         ILO Fan Controller
                     </h1>
                 </div>
+
+                <label
+                    className="flex items-center cursor-pointer sm:mx-11 mx-[3.25rem] mb-2"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        setEditAll(!editAll);
+                    }}
+                >
+                    <div className="relative">
+                        <input
+                            type="checkbox"
+                            className="sr-only"
+                            checked={editAll}
+                        />
+                        <div className="w-10 h-4 bg-gray-400 rounded-full shadow-inner"></div>
+                        <div className="dot absolute w-6 h-6 bg-white rounded-full shadow -left-1 -top-1 transition"></div>
+                    </div>
+                    <div className="ml-3 text-white font-medium">Edit All</div>
+                </label>
+
                 <Formik
                     validateOnChange={false}
                     validateOnBlur={false}
@@ -51,7 +87,11 @@ const Home = ({ fans }: Props): JSX.Element => {
                         });
                         const response = await r.json();
 
-                        console.log(response);
+                        if (r.status === 200) {
+                            toast.success("Updated successfully!");
+                        } else {
+                            toast.error(response.message);
+                        }
 
                         setSubmitting(false);
                     }}
@@ -76,19 +116,11 @@ const Home = ({ fans }: Props): JSX.Element => {
                                 </div>
                             ))}
                             <div className="mt-6 flex items-center sm:gap-4 gap-2 justify-center w-full sm:px-0 px-4">
-                                <button className="sm:w-auto w-full bg-emerald-600 hover:bg-emerald-700 duration-150 font-semibold text-emerald-50 py-2 px-10 rounded">
-                                    {isSubmitting ? "Updating" : "Update"}
-                                </button>
                                 <button
-                                    className={`sm:w-auto w-full bg-${
-                                        editAll ? "teal" : "sky"
-                                    }-600 hover:bg-${
-                                        editAll ? "teal" : "sky"
-                                    }-700 duration-150 font-semibold text-gray-50 py-2 px-10 rounded`}
-                                    onClick={() => setEditAll(!editAll)}
-                                    type="button"
+                                    className="sm:w-auto disabled:bg-gray-500 disabled:cursor-not-allowed w-full bg-emerald-600 hover:bg-emerald-700 duration-150 font-semibold text-emerald-50 py-2 px-10 rounded"
+                                    disabled={isSubmitting}
                                 >
-                                    Edit All
+                                    {isSubmitting ? "Updating" : "Update"}
                                 </button>
                                 <button
                                     className="sm:w-auto w-full bg-cyan-600 hover:bg-cyan-700 duration-150 font-semibold text-blue-50 py-2 px-10 rounded"
@@ -98,6 +130,14 @@ const Home = ({ fans }: Props): JSX.Element => {
                                     type="button"
                                 >
                                     Reset All
+                                </button>
+                                <button
+                                    className="sm:w-auto w-full bg-sky-800 hover:bg-sky-900 disabled:bg-gray-500 disabled:cursor-not-allowed duration-150 font-semibold text-gray-50 py-2 px-10 rounded"
+                                    type="button"
+                                    onClick={HandleUnlock}
+                                    disabled={unlocking}
+                                >
+                                    {unlocking ? "Unlocking" : "Unlock"}
                                 </button>
                             </div>
                             {errors.fans && (
