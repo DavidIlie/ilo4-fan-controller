@@ -32,7 +32,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             //     console.log(command, command2);
             // }
 
-            const speed = ((body.fans[0] as any as number) / 100) * 255;
+            const speed = (body.fans[0] / 100) * 255;
 
             const command = await ssh.execCommand(`fan p global lock ${speed}`);
 
