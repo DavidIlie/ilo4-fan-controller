@@ -1,7 +1,7 @@
 # Modded ILO4 Fan Controller for Gen 8 HP Servers
 
 <p align="center">
-  <img width="400" src="readme/showcase.png">
+  <img width="400" src="readme/screenshot.png">
   <br>
   <i>Freely manage your HP's fan speeds; anywhere, any time!</i>
 </p>
