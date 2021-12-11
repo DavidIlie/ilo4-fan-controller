@@ -1,0 +1,36 @@
+name: "build_deploy_app"
+
+on:
+    push:
+        branches:
+            - master
+
+jobs:
+    build:
+        name: "Build App"
+        runs-on: ubuntu-latest
+        steps:
+            - name: "Build:checkout"
+              uses: actions/checkout@v2
+            - name: Login to GitHub Container Registry
+              uses: docker/login-action@v1
+              with:
+                  registry: ghcr.io
+                  username: DavidIlie
+                  password: ${{ secrets.GHCR_PASSWORD }}
+            - name: Build and publish Docker image
+              run: |
+                  docker build -t ghcr.io/davidilie/ilo4-fan-controller .
+                  docker push ghcr.io/davidilie/ilo4-fan-controller
+    deploy_self:
+        name: "Deploy"
+        runs-on: ubuntu-latest
+        needs: [build]
+        steps:
+            - name: "Set Kubernetes Context"
+              uses: Azure/k8s-set-context@v1
+              with:
+                  method: kubeconfig
+                  kubeconfig: ${{ secrets.KUBE_CONFIG }}
+            - name: "Restart web deployment"
+              run: kubectl rollout restart deploy ilo4-fan-controller -n internal
