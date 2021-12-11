@@ -15,7 +15,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         });
 
         await ssh.execCommand(`fan p global unlock`);
-        res.send("OK");
+        res.json({ message: "ok" });
         ssh.dispose();
     } catch (error) {
         res.status(400).json({ message: error.message });

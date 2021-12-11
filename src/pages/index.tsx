@@ -25,6 +25,7 @@ const Home = ({ fans }: Props): JSX.Element => {
     const [editAll, setEditAll] = useState<boolean>(false);
 
     const [unlocking, setUnlocking] = useState<boolean>();
+    const [presetLoading, setPresetLoading] = useState<number>(0);
 
     const HandleUnlock = async () => {
         setUnlocking(true);
@@ -39,6 +40,33 @@ const Home = ({ fans }: Props): JSX.Element => {
         setUnlocking(false);
     };
 
+    const HandlePreset = async (
+        speed: number,
+        update: (field: string, value: any, shouldValidate?: boolean) => void,
+        preset: 1 | 2 | 3
+    ) => {
+        setPresetLoading(preset);
+        const speeds = [];
+
+        fans.forEach(() => speeds.push(speed));
+
+        const r = await fetch(`/api/update`, {
+            method: "POST",
+            body: JSON.stringify({ fans: speeds }),
+            headers: { "Content-Type": "application/json" },
+        });
+        const response = await r.json();
+
+        if (r.status === 200) {
+            toast.success("Configured successfully!");
+            ogArray = speeds;
+            update("fans", speeds);
+        } else {
+            toast.error(response.message);
+        }
+        setPresetLoading(0);
+    };
+
     return (
         <div className="h-screen bg-gray-800 sm:flex sm:justify-center sm:items-center sm:pt-0 pt-4 text-white px-2">
             <div className="bg-gray-900 border-2 border-gray-700 shadow-xl duration-150 pt-6 pb-4 sm:px-12 sm:max-w-2xl w-full rounded container">
@@ -48,26 +76,6 @@ const Home = ({ fans }: Props): JSX.Element => {
                         ILO Fan Controller
                     </h1>
                 </div>
-
-                <label
-                    className="flex items-center cursor-pointer w-fit sm:mx-1 mx-8 my-3"
-                    onClick={(e) => {
-                        e.preventDefault();
-                        setEditAll(!editAll);
-                    }}
-                >
-                    <div className="relative">
-                        <input
-                            type="checkbox"
-                            className="sr-only"
-                            checked={editAll}
-                        />
-                        <div className="w-10 h-4 bg-gray-800 rounded-full shadow-inner"></div>
-                        <div className="dot absolute w-6 h-6 bg-gray-500 rounded-full shadow -left-1 -top-1 transition"></div>
-                    </div>
-                    <div className="ml-3 text-white font-medium">Edit All</div>
-                </label>
-
                 <Formik
                     validateOnChange={false}
                     validateOnBlur={false}
@@ -96,62 +104,117 @@ const Home = ({ fans }: Props): JSX.Element => {
                     }}
                 >
                     {({ errors, isSubmitting, values, setFieldValue }) => (
-                        <Form className="flex justify-center flex-wrap">
-                            {fans.map((fan, index) => (
-                                <div
-                                    className={`${
-                                        index !== values.fans.length - 1 &&
-                                        "mb-4"
-                                    }`}
-                                    key={index}
+                        <Form>
+                            <div className="sm:flex sm:items-center sm:justify-between sm:mx-1 mx-8 my-3 sm:mb-4 mb-6">
+                                <label
+                                    className="flex items-center cursor-pointer w-fit sm:mx-0 mx-auto sm:mb-0 mb-4"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setEditAll(!editAll);
+                                    }}
                                 >
-                                    <Fan
-                                        data={fan}
-                                        index={index}
-                                        values={values.fans}
-                                        update={setFieldValue}
-                                        editAll={editAll}
-                                    />
-                                </div>
-                            ))}
-                            <div className="mt-6 flex flex-wrap items-center sm:gap-4 gap-2 justify-center w-full sm:px-0 px-4">
-                                <button
-                                    className="sm:hidden block sm:w-auto disabled:bg-gray-500 disabled:cursor-not-allowed w-full bg-emerald-600 hover:bg-emerald-700 duration-150 font-semibold text-emerald-50 py-2 px-10 rounded"
-                                    disabled={isSubmitting}
-                                >
-                                    {isSubmitting ? "Updating" : "Update"}
-                                </button>
-                                <div className="flex gap-2 items-center justify-center w-full">
+                                    <div className="relative">
+                                        <input
+                                            type="checkbox"
+                                            className="sr-only"
+                                            checked={editAll}
+                                        />
+                                        <div className="w-10 h-4 bg-gray-800 rounded-full shadow-inner"></div>
+                                        <div className="dot absolute w-6 h-6 bg-gray-500 rounded-full shadow -left-1 -top-1 transition"></div>
+                                    </div>
+                                    <div className="ml-3 text-white font-medium">
+                                        Edit All
+                                    </div>
+                                </label>
+                                <div className="flex items-center gap-2 sm:w-fit w-full">
                                     <button
-                                        className="sm:block hidden sm:w-auto disabled:bg-gray-500 disabled:cursor-not-allowed w-full bg-emerald-600 hover:bg-emerald-700 duration-150 font-semibold text-emerald-50 py-2 px-10 rounded"
+                                        className="sm:w-auto disabled:bg-gray-500 disabled:cursor-not-allowed w-full bg-cyan-600 hover:bg-cyan-700 duration-150 font-semibold text-cyan-50 py-2 px-6 rounded"
+                                        disabled={presetLoading === 1}
+                                        onClick={() =>
+                                            HandlePreset(32, setFieldValue, 1)
+                                        }
+                                    >
+                                        Quiet
+                                    </button>
+                                    <button
+                                        className="sm:w-auto disabled:bg-gray-500 disabled:cursor-not-allowed w-full bg-emerald-600 hover:bg-emerald-700 duration-150 font-semibold text-emerald-50 py-2 px-6 rounded"
+                                        disabled={presetLoading === 2}
+                                        onClick={() =>
+                                            HandlePreset(60, setFieldValue, 2)
+                                        }
+                                    >
+                                        Normal
+                                    </button>
+                                    <button
+                                        className="sm:w-auto disabled:bg-gray-500 disabled:cursor-not-allowed w-full bg-red-500 hover:bg-red-600 duration-150 font-semibold text-red-50 py-2 px-6 rounded"
+                                        disabled={presetLoading === 3}
+                                        onClick={() =>
+                                            HandlePreset(90, setFieldValue, 3)
+                                        }
+                                    >
+                                        Turbo
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="flex justify-center flex-wrap">
+                                {fans.map((fan, index) => (
+                                    <div
+                                        className={`${
+                                            index !== values.fans.length - 1 &&
+                                            "mb-4"
+                                        }`}
+                                        key={index}
+                                    >
+                                        <Fan
+                                            data={fan}
+                                            index={index}
+                                            values={values.fans}
+                                            update={setFieldValue}
+                                            editAll={editAll}
+                                        />
+                                    </div>
+                                ))}
+                                <div className="mt-6 flex flex-wrap items-center sm:gap-4 gap-2 justify-center w-full sm:px-0 px-4">
+                                    <button
+                                        className="sm:hidden block sm:w-auto disabled:bg-gray-500 disabled:cursor-not-allowed w-full bg-emerald-600 hover:bg-emerald-700 duration-150 font-semibold text-emerald-50 py-2 px-10 rounded"
                                         disabled={isSubmitting}
                                     >
                                         {isSubmitting ? "Updating" : "Update"}
                                     </button>
-                                    <button
-                                        className="sm:w-auto w-full bg-cyan-600 hover:bg-cyan-700 duration-150 font-semibold text-blue-50 py-2 px-10 rounded"
-                                        onClick={() =>
-                                            setFieldValue("fans", ogArray)
-                                        }
-                                        type="button"
-                                    >
-                                        Reset
-                                    </button>
-                                    <button
-                                        className="sm:w-auto w-full bg-sky-800 hover:bg-sky-900 disabled:bg-gray-500 disabled:cursor-not-allowed duration-150 font-semibold text-gray-50 py-2 px-10 rounded"
-                                        type="button"
-                                        onClick={HandleUnlock}
-                                        disabled={unlocking}
-                                    >
-                                        {unlocking ? "Unlocking" : "Unlock"}
-                                    </button>
+                                    <div className="flex gap-2 items-center justify-center w-full">
+                                        <button
+                                            className="sm:block hidden sm:w-auto disabled:bg-gray-500 disabled:cursor-not-allowed w-full bg-emerald-600 hover:bg-emerald-700 duration-150 font-semibold text-emerald-50 py-2 px-10 rounded"
+                                            disabled={isSubmitting}
+                                        >
+                                            {isSubmitting
+                                                ? "Updating"
+                                                : "Update"}
+                                        </button>
+                                        <button
+                                            className="sm:w-auto w-full bg-cyan-600 hover:bg-cyan-700 duration-150 font-semibold text-blue-50 py-2 px-10 rounded"
+                                            onClick={() =>
+                                                setFieldValue("fans", ogArray)
+                                            }
+                                            type="button"
+                                        >
+                                            Reset
+                                        </button>
+                                        <button
+                                            className="sm:w-auto w-full bg-sky-800 hover:bg-sky-900 disabled:bg-gray-500 disabled:cursor-not-allowed duration-150 font-semibold text-gray-50 py-2 px-10 rounded"
+                                            type="button"
+                                            onClick={HandleUnlock}
+                                            disabled={unlocking}
+                                        >
+                                            {unlocking ? "Unlocking" : "Unlock"}
+                                        </button>
+                                    </div>
                                 </div>
+                                {errors.fans && (
+                                    <h1 className="text-red-500 font-semibold text-lg mt-2">
+                                        {errors.fans}
+                                    </h1>
+                                )}
                             </div>
-                            {errors.fans && (
-                                <h1 className="text-red-500 font-semibold text-lg mt-2">
-                                    {errors.fans}
-                                </h1>
-                            )}
                         </Form>
                     )}
                 </Formik>
