@@ -28,7 +28,6 @@ export const getData = async () => {
 const handler = async (_req: NextApiRequest, res: NextApiResponse) => {
     try {
         const fans = await getData();
-
         return res.send(fans);
     } catch (error) {
         return res.status(500).json({ message: "Internal Server Error" });
