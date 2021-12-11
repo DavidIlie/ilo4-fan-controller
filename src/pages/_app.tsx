@@ -9,7 +9,7 @@ function ILOController({ Component, pageProps }: AppProps) {
     return (
         <>
             <Head>
-                <title>ILO Fan Controller</title>
+                <title>iLO Fan Controller</title>
             </Head>
             <Toaster position="top-center" />
             <Component {...pageProps} />

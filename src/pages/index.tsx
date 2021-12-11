@@ -73,7 +73,7 @@ const Home = ({ fans }: Props): JSX.Element => {
                 <div className="flex gap-4 items-center justify-center mb-6">
                     <img src="/ilo-logo.png" />
                     <h1 className="text-xl font-semibold">
-                        ILO Fan Controller
+                        iLO Fan Controller
                     </h1>
                 </div>
                 <Formik
