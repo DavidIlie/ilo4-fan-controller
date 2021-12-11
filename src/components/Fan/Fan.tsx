@@ -44,7 +44,7 @@ const Fan = ({
                 min="10"
                 max="100"
                 value={values[index]}
-                className="sm:w-[23rem] w-[13rem]"
+                className="sm:w-[27rem] w-[13rem]"
                 onChange={HandleUpdate}
             />
             <input
@@ -56,13 +56,6 @@ const Fan = ({
                 className="bg-gray-800 border border-gray-700 max-w-max p-1.5 py-1 rounded-md font-mono focus:outline-none"
                 onChange={HandleUpdate}
             />
-            <button
-                type="button"
-                onClick={() => HandleUpdate(original as any, false)}
-                className="sm:block hidden rounded bg-blue-800 hover:bg-blue-900 duration-150 sm:px-4 px-2 py-1"
-            >
-                Reset
-            </button>
         </div>
     );
 };
