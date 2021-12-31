@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent } from "react";
 import type { FanObject } from "../../types/Fan";
 
 interface FanProps {
@@ -16,8 +16,6 @@ const Fan = ({
     update,
     editAll,
 }: FanProps): JSX.Element => {
-    const [original, _setOriginal] = useState<number>(values[index]);
-
     const HandleUpdate = (val: ChangeEvent<HTMLInputElement>, event = true) => {
         const value = event
             ? (val.target.value as never as number)
@@ -38,7 +36,7 @@ const Fan = ({
 
     return (
         <div className="flex items-center justify-center gap-2">
-            <h1 className="font-semibold text-lg">{data.FanName}</h1>
+            <h1 className="text-lg font-semibold">{data.FanName}</h1>
             <input
                 type="range"
                 min="10"

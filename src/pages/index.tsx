@@ -17,13 +17,13 @@ interface Props {
 const Home = ({ fans, fail }: Props): JSX.Element => {
     if (fail)
         return (
-            <div className="h-screen bg-gray-800 sm:flex sm:justify-center sm:items-center sm:pt-0 pt-4 text-white px-2">
+            <div className="h-screen px-2 pt-4 text-white bg-gray-800 sm:flex sm:justify-center sm:items-center sm:pt-0">
                 <div className="text-center">
                     <Fade direction="up" triggerOnce cascade duration={400}>
-                        <h1 className="font-semibold text-red-500 text-5xl mb-4">
+                        <h1 className="mb-4 text-5xl font-semibold text-red-500">
                             Oops! Couldn't talk to iLO
                         </h1>
-                        <p className="text-xl mb-2">
+                        <p className="mb-2 text-xl">
                             Looks like you haven't configured your{" "}
                             <span className="font-mono text-yellow-500">
                                 environment variables
@@ -35,7 +35,7 @@ const Home = ({ fans, fail }: Props): JSX.Element => {
                             <a
                                 href="https://github.com/davidilie/ilo4-fan-controller"
                                 target="_blank"
-                                className="text-blue-400 hover:text-blue-500 duration-150 hover:underline"
+                                className="text-blue-400 duration-150 hover:text-blue-500 hover:underline"
                             >
                                 here
                             </a>
@@ -101,10 +101,10 @@ const Home = ({ fans, fail }: Props): JSX.Element => {
     };
 
     return (
-        <div className="h-screen bg-gray-800 sm:flex sm:justify-center sm:items-center sm:pt-0 pt-4 text-white px-2">
+        <div className="h-screen px-2 pt-4 text-white bg-gray-800 sm:flex sm:justify-center sm:items-center sm:pt-0">
             <Fade direction="left" triggerOnce>
-                <div className="bg-gray-900 border-2 border-gray-700 shadow-xl duration-150 pt-6 pb-4 sm:px-12 sm:max-w-2xl w-full rounded container">
-                    <div className="flex gap-4 items-center justify-center mb-6">
+                <div className="container w-full pt-6 pb-4 duration-150 bg-gray-900 border-2 border-gray-700 rounded shadow-xl sm:px-12 sm:max-w-2xl">
+                    <div className="flex items-center justify-center gap-4 mb-6">
                         <img src="/ilo-logo.png" />
                         <h1 className="text-xl font-semibold">
                             iLO Fan Controller
@@ -139,9 +139,9 @@ const Home = ({ fans, fail }: Props): JSX.Element => {
                     >
                         {({ errors, isSubmitting, values, setFieldValue }) => (
                             <Form>
-                                <div className="sm:flex sm:items-center sm:justify-between sm:mx-1 mx-8 my-3 sm:mb-4 mb-6">
+                                <div className="mx-8 my-3 mb-6 sm:flex sm:items-center sm:justify-between sm:mx-1 sm:mb-4">
                                     <label
-                                        className="flex items-center cursor-pointer w-fit sm:mx-0 mx-auto sm:mb-0 mb-4"
+                                        className="flex items-center mx-auto mb-4 cursor-pointer w-fit sm:mx-0 sm:mb-0"
                                         onClick={(e) => {
                                             e.preventDefault();
                                             setEditAll(!editAll);
@@ -154,15 +154,15 @@ const Home = ({ fans, fail }: Props): JSX.Element => {
                                                 checked={editAll}
                                             />
                                             <div className="w-10 h-4 bg-gray-800 rounded-full shadow-inner"></div>
-                                            <div className="dot absolute w-6 h-6 bg-gray-500 rounded-full shadow -left-1 -top-1 transition"></div>
+                                            <div className="absolute w-6 h-6 transition bg-gray-500 rounded-full shadow dot -left-1 -top-1"></div>
                                         </div>
-                                        <div className="ml-3 text-white font-medium">
+                                        <div className="ml-3 font-medium text-white">
                                             Edit All
                                         </div>
                                     </label>
-                                    <div className="flex items-center gap-2 sm:w-fit w-full">
+                                    <div className="flex items-center w-full gap-2 sm:w-fit">
                                         <button
-                                            className="sm:w-auto disabled:bg-gray-500 disabled:cursor-not-allowed w-full bg-cyan-600 hover:bg-cyan-700 duration-150 font-semibold text-cyan-50 py-2 px-6 rounded"
+                                            className="w-full px-6 py-2 font-semibold duration-150 rounded sm:w-auto disabled:bg-gray-500 disabled:cursor-not-allowed bg-cyan-600 hover:bg-cyan-700 text-cyan-50"
                                             disabled={presetLoading === 1}
                                             onClick={() =>
                                                 HandlePreset(
@@ -171,11 +171,12 @@ const Home = ({ fans, fail }: Props): JSX.Element => {
                                                     1
                                                 )
                                             }
+                                            title="32% Fan Speed"
                                         >
                                             Quiet
                                         </button>
                                         <button
-                                            className="sm:w-auto disabled:bg-gray-500 disabled:cursor-not-allowed w-full bg-emerald-600 hover:bg-emerald-700 duration-150 font-semibold text-emerald-50 py-2 px-6 rounded"
+                                            className="w-full px-6 py-2 font-semibold duration-150 rounded sm:w-auto disabled:bg-gray-500 disabled:cursor-not-allowed bg-emerald-600 hover:bg-emerald-700 text-emerald-50"
                                             disabled={presetLoading === 2}
                                             onClick={() =>
                                                 HandlePreset(
@@ -184,11 +185,12 @@ const Home = ({ fans, fail }: Props): JSX.Element => {
                                                     2
                                                 )
                                             }
+                                            title="60% Fan Speed"
                                         >
                                             Normal
                                         </button>
                                         <button
-                                            className="sm:w-auto disabled:bg-gray-500 disabled:cursor-not-allowed w-full bg-red-500 hover:bg-red-600 duration-150 font-semibold text-red-50 py-2 px-6 rounded"
+                                            className="w-full px-6 py-2 font-semibold duration-150 bg-red-500 rounded sm:w-auto disabled:bg-gray-500 disabled:cursor-not-allowed hover:bg-red-600 text-red-50"
                                             disabled={presetLoading === 3}
                                             onClick={() =>
                                                 HandlePreset(
@@ -197,12 +199,13 @@ const Home = ({ fans, fail }: Props): JSX.Element => {
                                                     3
                                                 )
                                             }
+                                            title="90% Fan Speed"
                                         >
                                             Turbo
                                         </button>
                                     </div>
                                 </div>
-                                <div className="flex justify-center flex-wrap">
+                                <div className="flex flex-wrap justify-center">
                                     {fans.map((fan, index) => (
                                         <div
                                             className={`${
@@ -221,26 +224,28 @@ const Home = ({ fans, fail }: Props): JSX.Element => {
                                             />
                                         </div>
                                     ))}
-                                    <div className="mt-6 flex flex-wrap items-center sm:gap-4 gap-2 justify-center w-full sm:px-0 px-4">
+                                    <div className="flex flex-wrap items-center justify-center w-full gap-2 px-4 mt-6 sm:gap-4 sm:px-0">
                                         <button
-                                            className="sm:hidden block sm:w-auto disabled:bg-gray-500 disabled:cursor-not-allowed w-full bg-emerald-600 hover:bg-emerald-700 duration-150 font-semibold text-emerald-50 py-2 px-10 rounded"
+                                            className="block w-full px-10 py-2 font-semibold duration-150 rounded sm:hidden sm:w-auto disabled:bg-gray-500 disabled:cursor-not-allowed bg-emerald-600 hover:bg-emerald-700 text-emerald-50"
                                             disabled={isSubmitting}
+                                            title="Update fans to specified speed"
                                         >
                                             {isSubmitting
                                                 ? "Updating"
                                                 : "Update"}
                                         </button>
-                                        <div className="flex gap-2 items-center justify-center w-full">
+                                        <div className="flex items-center justify-center w-full gap-2">
                                             <button
-                                                className="sm:block hidden sm:w-auto disabled:bg-gray-500 disabled:cursor-not-allowed w-full bg-emerald-600 hover:bg-emerald-700 duration-150 font-semibold text-emerald-50 py-2 px-10 rounded"
+                                                className="hidden w-full px-10 py-2 font-semibold duration-150 rounded sm:block sm:w-auto disabled:bg-gray-500 disabled:cursor-not-allowed bg-emerald-600 hover:bg-emerald-700 text-emerald-50"
                                                 disabled={isSubmitting}
+                                                title="Update fans to specified speed"
                                             >
                                                 {isSubmitting
                                                     ? "Updating"
                                                     : "Update"}
                                             </button>
                                             <button
-                                                className="sm:w-auto w-full bg-cyan-600 hover:bg-cyan-700 duration-150 font-semibold text-blue-50 py-2 px-10 rounded"
+                                                className="w-full px-10 py-2 font-semibold duration-150 rounded sm:w-auto bg-cyan-600 hover:bg-cyan-700 text-blue-50"
                                                 onClick={() =>
                                                     setFieldValue(
                                                         "fans",
@@ -248,14 +253,16 @@ const Home = ({ fans, fail }: Props): JSX.Element => {
                                                     )
                                                 }
                                                 type="button"
+                                                title="Reset fans to initial speed"
                                             >
                                                 Reset
                                             </button>
                                             <button
-                                                className="sm:w-auto w-full bg-sky-800 hover:bg-sky-900 disabled:bg-gray-500 disabled:cursor-not-allowed duration-150 font-semibold text-gray-50 py-2 px-10 rounded"
+                                                className="w-full px-10 py-2 font-semibold duration-150 rounded sm:w-auto bg-sky-800 hover:bg-sky-900 disabled:bg-gray-500 disabled:cursor-not-allowed text-gray-50"
                                                 type="button"
                                                 onClick={HandleUnlock}
                                                 disabled={unlocking}
+                                                title="Unlock fans to their default speed"
                                             >
                                                 {unlocking
                                                     ? "Unlocking"
@@ -264,7 +271,7 @@ const Home = ({ fans, fail }: Props): JSX.Element => {
                                         </div>
                                     </div>
                                     {errors.fans && (
-                                        <h1 className="text-red-500 font-semibold text-lg mt-2">
+                                        <h1 className="mt-2 text-lg font-semibold text-red-500">
                                             {errors.fans}
                                         </h1>
                                     )}
