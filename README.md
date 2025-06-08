@@ -39,7 +39,7 @@ docker run -d \
 
 You can modify this to work with Rancher, Portainer, etc.
 
-## Directly with Node.js (v20 recommended)
+## Directly with node
 
 On your desired machine, clone down the repository and make a copy of the `.env.template` into `.env` and fill in **your** values.
 
