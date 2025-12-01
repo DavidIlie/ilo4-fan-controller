@@ -1,13 +1,17 @@
 import base64 from "base-64";
-import https from "https";
+import { Agent as UndiciAgent } from "undici";
 import { NodeSSH } from "node-ssh";
-
 import { changeFanSpeedSchema, ChangeFanSpeedInput } from "../schemas/changeFanSpeed";
 import type { FanObject } from "../types/Fan";
 
-const httpsAgent = new https.Agent({
-    rejectUnauthorized: false,
+const httpsDispatcher = new UndiciAgent({
+    connect: {
+        rejectUnauthorized: false,
+    },
 });
+
+const getIloHost = (): string =>
+    (process.env.ILO_HOST ?? "").replace(/^https?:\/\//, "");
 
 const ensureEnv = () => {
     const missing = [
@@ -23,37 +27,42 @@ const ensureEnv = () => {
     }
 };
 
+type IloThermalPayload = {
+    Fans?: FanObject[];
+};
+
 export const fetchFans = async (): Promise<FanObject[]> => {
     ensureEnv();
 
+    const requestInit: RequestInit & { dispatcher: UndiciAgent } = {
+        headers: {
+            Authorization: `Basic ${base64.encode(
+                `${process.env.ILO_USERNAME}:${process.env.ILO_PASSWORD}`
+            )}`,
+        },
+        dispatcher: httpsDispatcher,
+    };
+
     const response = await fetch(
         `https://${process.env.ILO_HOST}/redfish/v1/chassis/1/Thermal`,
-        {
-            headers: {
-                Authorization: `Basic ${base64.encode(
-                    `${process.env.ILO_USERNAME}:${process.env.ILO_PASSWORD}`
-                )}`,
-            },
-            // @ts-expect-error: The undici fetch typing does not expose "agent" yet.
-            agent: httpsAgent,
-        }
+        requestInit
     );
 
     if (!response.ok) {
         throw new Error(`Unable to fetch fan data (${response.status})`);
     }
 
-    const payload = await response.json();
+    const payload = (await response.json()) as IloThermalPayload;
     return payload.Fans ?? [];
 };
 
 const withSshConnection = async (callback: (ssh: NodeSSH) => Promise<void>) => {
     ensureEnv();
-
+    const iloHost = getIloHost();
     const ssh = new NodeSSH();
 
     await ssh.connect({
-        host: process.env.ILO_HOST,
+        host: iloHost,
         username: process.env.ILO_USERNAME,
         password: process.env.ILO_PASSWORD,
         algorithms: {

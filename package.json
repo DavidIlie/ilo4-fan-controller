@@ -10,11 +10,13 @@
         "base-64": "^1.0.0",
         "formik": "^2.4.6",
         "next": "^14.2.5",
+        "node-gyp": "^12.1.0",
         "node-ssh": "^13.2.0",
         "react": "^18.3.1",
         "react-awesome-reveal": "^4.2.6",
         "react-dom": "^18.3.1",
         "react-hot-toast": "^2.4.1",
+        "undici": "^1.0.0.",
         "yup": "^1.4.0"
     },
     "devDependencies": {
