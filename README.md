@@ -18,6 +18,22 @@
 
 -   There is **no authorization system** put in place, if you plan to expose this publicly, you must use some sort of authentication proxy such as [Authelia](https://github.com/authelia/authelia) which I have a guide for Kubernetes [here](https://github.com/DavidIlie/kubernetes-setup/tree/master/8%20-%20authelia). It wouldn't be fun for someone to put your server fans at 100% whilst you're not home.
 
+## REST API
+
+The controller now exposes a small REST API for automation or scripting:
+
+-   `GET /api/fans` — retrieves the current iLO fan data payload.
+-   `POST /api/fans` — sets fan speeds using a JSON body like `{ "fans": [32, 32, 60] }` (values are percentages).
+-   `POST /api/fans/unlock` — unlocks global fan control.
+
+Example usage with `curl`:
+
+```bash
+curl -X POST http://localhost:3000/api/fans \
+  -H "Content-Type: application/json" \
+  -d '{"fans": [40, 40, 40]}'
+```
+
 ## Installation
 
 > The main requirement is that your iLO4 firmware is flashed with the _["The Fan Hack"](https://www.reddit.com/r/homelab/comments/hix44v/silence_of_the_fans_pt_2_hp_ilo_4_273_now_with/)_ mod.
