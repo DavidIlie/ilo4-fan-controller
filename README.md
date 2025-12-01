@@ -34,19 +34,19 @@ Example usage with `curl`:
 BASE_URL="http://ilo-fan-controller-ip.local:3000"
 
 
-# - Unlock manual control
+### - Unlock manual control
 ```bash
 curl -s -X POST "$BASE_URL/api/fans/unlock" | jq .
 ```
 
-# - Set all three fans to 40%
+### - Set all three fans to 40%
 ```bash
 curl -s -X POST "$BASE_URL/api/fans" \
   -H 'Content-Type: application/json' \
   -d '{"fans":[40,40,40]}' | jq .
 ```
 
-# - Read back actual values
+### - Read back actual values
 ```bash
 curl -s "$BASE_URL/api/fans" | jq .
 ```
