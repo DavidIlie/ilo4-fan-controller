@@ -12,7 +12,7 @@
 
 -   When you first load the page, a function runs through the [Next.js](https://nextjs.org/) `getServerSideProps` function which fetches the current data about the fan speeds of the server. This is then parsed and displayed on form, allowing you to have even 20 fans if you want as its all dynmaically parsed.
 
--   Once you either apply the settings, or select a preset, the server connects via SSH to iLO4 and then runs the required commands, normally it takes about 10-20 seconds for all the comamnds to run through, but the more fans you have the longer it will take.
+-   Once you either apply the settings, or select a preset, the server connects via SSH to iLO4 and then runs the required commands, normally it takes about 10-20 seconds for all the commands to run through, but the more fans you have the longer it will take.
 
 -   There's now an REST API available which you can use for scriptings and such
 
