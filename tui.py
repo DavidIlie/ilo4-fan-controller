@@ -7,8 +7,8 @@ import requests
 DEFAULT_BASE_URL = "http://localhost:1234"
 
 # Presets in Percent
-QUIET_PRESET = 20
-NORMAL_PRESET = 35
+QUIET_PRESET = 30 # Slightly increased, as 1U servers (HD controllers) often experience overheating when set to 20%. 
+NORMAL_PRESET = 40
 TURBO_PRESET = 80
 
 

@@ -31,7 +31,7 @@ The controller now exposes a small REST API for automation or scripting:
 Example usage with `curl`:
 
 ```bash
-BASE_URL="http://ilo-fan-controller-ip.local:3000"
+BASE_URL="http://ilo-fan-controller-ip:3000"
 ```
 
 ### - Unlock manual control
@@ -60,9 +60,8 @@ curl -s "$BASE_URL/api/fans" | jq .
 This repository contains a docker image which can easily be pulled down to use in a Docker/Kubernetes environment. Modify the command below with **your** values regarding your setup and then you can run the command:
 
 ```bash
-git clone https://github.com/0n1cOn3/ilo4-fan-controller
-docker build -t local/ilo4-fan-controller:latest-local .
-
+git clone https://github.com/DavidIlie/ilo4-fan-controller
+docker build -t ghcr.io/davidilie/ilo4-fan-controller:latest .
 ```bash
 docker run -d \
   --name=ilo4-fan-controller \
@@ -71,7 +70,7 @@ docker run -d \
   -e ILO_PASSWORD='*your password**' \
   -e ILO_HOST='*the ip address you access ILO on*' \
   --restart unless-stopped \
-  local/ilo4-fan-controller:latest-local
+  ghcr.io/davidilie/ilo4-fan-controller:latest
 ```
 
 You can modify this to work with Rancher, Portainer, etc.
