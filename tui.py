@@ -265,7 +265,7 @@ class FanTUI:
             elif ch in (ord("r"), ord("R")):
                 self.do_reset()
             elif ch in (ord("l"), ord("L")):
-                # small letter l is already „right“, Unlock only with capital letter L
+                # small letter l is already "right", Unlock only with capital letter L
                 if ch == ord("L"):
                     self.do_unlock()
             elif ch in (curses.KEY_ENTER, 10, 13, ord(" ")):
