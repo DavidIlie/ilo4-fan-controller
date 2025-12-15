@@ -14,7 +14,7 @@
 
 -   Once you either apply the settings, or select a preset, the server connects via SSH to iLO4 and then runs the required commands, normally it takes about 10-20 seconds for all the comamnds to run through, but the more fans you have the longer it will take.
 
--   There's now an REST API availble which you can use for scriptings and such
+-   There's now an REST API available which you can use for scriptings and such
 
 ## Important Information
 
