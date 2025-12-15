@@ -23,7 +23,7 @@ class FanTUI:
         self.status = "Loading fan data from API..."
         self.num_fans = 0
 
-        # Indication for the „Controls“
+        # Indication for the "Controls"
         self.IDX_EDIT_ALL = 0
         self.IDX_QUIET = 1
         self.IDX_NORMAL = 2
@@ -110,7 +110,7 @@ class FanTUI:
             self.stdscr.refresh()
             return
 
-        # Titel
+        # Title
         title = "iLO Fan Controller"
         subtitle = f"{self.base_url}"
         title_x = max(0, (w - len(title)) // 2)
@@ -265,7 +265,7 @@ class FanTUI:
             elif ch in (ord("r"), ord("R")):
                 self.do_reset()
             elif ch in (ord("l"), ord("L")):
-                # small letter l is already „right“, Unlock only with capital letter L
+                # small letter l is already "right", Unlock only with capital letter L
                 if ch == ord("L"):
                     self.do_unlock()
             elif ch in (curses.KEY_ENTER, 10, 13, ord(" ")):

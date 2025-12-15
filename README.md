@@ -12,9 +12,9 @@
 
 -   When you first load the page, a function runs through the [Next.js](https://nextjs.org/) `getServerSideProps` function which fetches the current data about the fan speeds of the server. This is then parsed and displayed on form, allowing you to have even 20 fans if you want as its all dynmaically parsed.
 
--   Once you either apply the settings, or select a preset, the server connects via SSH to iLO4 and then runs the required commands, normally it takes about 10-20 seconds for all the comamnds to run through, but the more fans you have the longer it will take.
+-   Once you either apply the settings, or select a preset, the server connects via SSH to iLO4 and then runs the required commands, normally it takes about 10-20 seconds for all the commands to run through, but the more fans you have the longer it will take.
 
--   There's now an REST API availble which you can use for scriptings and such
+-   There's now an REST API available which you can use for scriptings and such
 
 ## Important Information
 
@@ -57,7 +57,7 @@ curl -s "$BASE_URL/api/fans" | jq .
 
 ## Docker
 
-This resposity contains a docker image which can easily be pulled down to use in a Docker/Kubernetes environment. Modify the comamnd below with **your** values regarding your setup and then you can run the command:
+This repository contains a docker image which can easily be pulled down to use in a Docker/Kubernetes environment. Modify the command below with **your** values regarding your setup and then you can run the command:
 
 ```bash
 git clone https://github.com/DavidIlie/ilo4-fan-controller
