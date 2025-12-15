@@ -1,5 +1,5 @@
 import type { GetServerSideProps } from "next";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Formik, Form } from "formik";
 import toast from "react-hot-toast";
 import { Fade } from "react-awesome-reveal";
@@ -7,7 +7,7 @@ import { Fade } from "react-awesome-reveal";
 import Fan from "../components/Fan";
 import type { FanObject } from "../types/Fan";
 import { changeFanSpeedSchema } from "../schemas/changeFanSpeed";
-import { getData } from "./api/temps";
+import { fetchFans } from "../lib/iloClient";
 
 interface Props {
     fans: FanObject[];
@@ -46,56 +46,59 @@ const Home = ({ fans, fail }: Props): JSX.Element => {
             </div>
         );
 
-    let fanArray = [];
-    let ogArray = [];
-
-    fans.forEach(
-        (fan) =>
-            fanArray.push(fan.CurrentReading) &&
-            ogArray.push(fan.CurrentReading)
+    const initialFanSpeeds = useMemo(
+        () => fans.map((fan) => fan.CurrentReading),
+        [fans]
     );
 
+    const [baselineSpeeds, setBaselineSpeeds] =
+        useState<number[]>(initialFanSpeeds);
     const [editAll, setEditAll] = useState<boolean>(false);
-
-    const [unlocking, setUnlocking] = useState<boolean>();
+    const [unlocking, setUnlocking] = useState<boolean>(false);
     const [presetLoading, setPresetLoading] = useState<number>(0);
 
-    const HandleUnlock = async () => {
-        setUnlocking(true);
-        const r = await fetch(`/api/unlock`);
-        const response = await r.json();
+    useEffect(() => {
+        setBaselineSpeeds(initialFanSpeeds);
+    }, [initialFanSpeeds]);
 
-        if (r.status === 200) {
-            toast.success("Updated successfully!");
+    const handleUnlock = async () => {
+        setUnlocking(true);
+        const response = await fetch(`/api/fans/unlock`, { method: "POST" });
+        const payload = await response.json();
+
+        if (response.status === 200) {
+            toast.success("Fans unlocked successfully!");
         } else {
-            toast.error(response.message);
+            toast.error(payload.message);
         }
         setUnlocking(false);
     };
 
-    const HandlePreset = async (
+    const handlePreset = async (
         speed: number,
-        update: (field: string, value: any, shouldValidate?: boolean) => void,
+        update: (
+            field: string,
+            value: unknown,
+            shouldValidate?: boolean
+        ) => void,
         preset: 1 | 2 | 3
     ) => {
         setPresetLoading(preset);
-        const speeds = [];
+        const speeds = fans.map(() => speed);
 
-        fans.forEach(() => speeds.push(speed));
-
-        const r = await fetch(`/api/update`, {
+        const response = await fetch(`/api/fans`, {
             method: "POST",
             body: JSON.stringify({ fans: speeds }),
             headers: { "Content-Type": "application/json" },
         });
-        const response = await r.json();
+        const payload = await response.json();
 
-        if (r.status === 200) {
+        if (response.status === 200) {
             toast.success("Configured successfully!");
-            ogArray = speeds;
+            setBaselineSpeeds(speeds);
             update("fans", speeds);
         } else {
-            toast.error(response.message);
+            toast.error(payload.message);
         }
         setPresetLoading(0);
     };
@@ -115,23 +118,24 @@ const Home = ({ fans, fail }: Props): JSX.Element => {
                         validateOnBlur={false}
                         validationSchema={changeFanSpeedSchema}
                         initialValues={{
-                            fans: fanArray,
+                            fans: initialFanSpeeds,
                         }}
+                        enableReinitialize
                         onSubmit={async (data, { setSubmitting }) => {
                             setSubmitting(true);
 
-                            const r = await fetch(`/api/update`, {
+                            const response = await fetch(`/api/fans`, {
                                 method: "POST",
                                 body: JSON.stringify(data),
                                 headers: { "Content-Type": "application/json" },
                             });
-                            const response = await r.json();
+                            const payload = await response.json();
 
-                            if (r.status === 200) {
+                            if (response.status === 200) {
                                 toast.success("Updated successfully!");
-                                ogArray = data.fans;
+                                setBaselineSpeeds(data.fans);
                             } else {
-                                toast.error(response.message);
+                                toast.error(payload.message);
                             }
 
                             setSubmitting(false);
@@ -165,7 +169,7 @@ const Home = ({ fans, fail }: Props): JSX.Element => {
                                             className="w-full px-6 py-2 font-semibold duration-150 rounded sm:w-auto disabled:bg-gray-500 disabled:cursor-not-allowed bg-cyan-600 hover:bg-cyan-700 text-cyan-50"
                                             disabled={presetLoading === 1}
                                             onClick={() =>
-                                                HandlePreset(
+                                                handlePreset(
                                                     32,
                                                     setFieldValue,
                                                     1
@@ -179,7 +183,7 @@ const Home = ({ fans, fail }: Props): JSX.Element => {
                                             className="w-full px-6 py-2 font-semibold duration-150 rounded sm:w-auto disabled:bg-gray-500 disabled:cursor-not-allowed bg-emerald-600 hover:bg-emerald-700 text-emerald-50"
                                             disabled={presetLoading === 2}
                                             onClick={() =>
-                                                HandlePreset(
+                                                handlePreset(
                                                     60,
                                                     setFieldValue,
                                                     2
@@ -193,7 +197,7 @@ const Home = ({ fans, fail }: Props): JSX.Element => {
                                             className="w-full px-6 py-2 font-semibold duration-150 bg-red-500 rounded sm:w-auto disabled:bg-gray-500 disabled:cursor-not-allowed hover:bg-red-600 text-red-50"
                                             disabled={presetLoading === 3}
                                             onClick={() =>
-                                                HandlePreset(
+                                                handlePreset(
                                                     90,
                                                     setFieldValue,
                                                     3
@@ -249,7 +253,7 @@ const Home = ({ fans, fail }: Props): JSX.Element => {
                                                 onClick={() =>
                                                     setFieldValue(
                                                         "fans",
-                                                        ogArray
+                                                        baselineSpeeds
                                                     )
                                                 }
                                                 type="button"
@@ -260,7 +264,7 @@ const Home = ({ fans, fail }: Props): JSX.Element => {
                                             <button
                                                 className="w-full px-10 py-2 font-semibold duration-150 rounded sm:w-auto bg-sky-800 hover:bg-sky-900 disabled:bg-gray-500 disabled:cursor-not-allowed text-gray-50"
                                                 type="button"
-                                                onClick={HandleUnlock}
+                                                onClick={handleUnlock}
                                                 disabled={unlocking}
                                                 title="Unlock fans to their default speed"
                                             >
@@ -287,7 +291,7 @@ const Home = ({ fans, fail }: Props): JSX.Element => {
 
 export const getServerSideProps: GetServerSideProps = async () => {
     try {
-        const fans = await getData();
+        const fans = await fetchFans();
         return {
             props: {
                 fans,

@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { unlockFans } from "../../lib/iloClient";
+import { unlockFans } from "../../../lib/iloClient";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     if (req.method !== "POST") {
@@ -10,10 +10,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     try {
         await unlockFans();
-        res.json({ message: "ok" });
+        return res.status(200).json({ message: "ok" });
     } catch (error) {
         const message = error instanceof Error ? error.message : "Unable to unlock fans";
-        res.status(400).json({ message });
+        return res.status(400).json({ message });
     }
 };
 

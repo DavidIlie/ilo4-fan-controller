@@ -1,36 +1,16 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import https from "https";
-import base64 from "base-64";
 
-export const getData = async () => {
-    const httpsAgent = new https.Agent({
-        rejectUnauthorized: false,
-    });
+import { fetchFans } from "../../lib/iloClient";
 
-    const r = await fetch(
-        `https://${process.env.ILO_HOST}/redfish/v1/chassis/1/Thermal`,
-        {
-            headers: {
-                Authorization: `Basic ${base64.encode(
-                    `${process.env.ILO_USERNAME}:${process.env.ILO_PASSWORD}`
-                )}`,
-            },
-            //@ts-ignore
-            agent: httpsAgent,
-        }
-    );
-
-    const response = await r.json();
-
-    return response.Fans;
-};
+export const getData = fetchFans;
 
 const handler = async (_req: NextApiRequest, res: NextApiResponse) => {
     try {
-        const fans = await getData();
-        return res.send(fans);
+        const fans = await fetchFans();
+        return res.status(200).json({ fans });
     } catch (error) {
-        return res.status(500).json({ message: "Internal Server Error" });
+        const message = error instanceof Error ? error.message : "Internal Server Error";
+        return res.status(500).json({ message });
     }
 };
 

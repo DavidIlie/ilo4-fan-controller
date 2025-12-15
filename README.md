@@ -1,4 +1,4 @@
-# Modded iLO4 Fan Controller for Gen 8 HP Servers
+# Another modded iLO4 Fan Controller for Gen 8 HP Servers
 
 <p align="center">
   <img width="400" src="readme/screenshot.png">
@@ -12,11 +12,44 @@
 
 -   When you first load the page, a function runs through the [Next.js](https://nextjs.org/) `getServerSideProps` function which fetches the current data about the fan speeds of the server. This is then parsed and displayed on form, allowing you to have even 20 fans if you want as its all dynmaically parsed.
 
--   Once you either apply the settings, or select a preset, the server connects via SSH to iLO4 and then runs the required commands, normally it takes about 10-20 seconds for all the comamnds to run through, but the more fans you have the longer it will take.
+-   Once you either apply the settings, or select a preset, the server connects via SSH to iLO4 and then runs the required commands, normally it takes about 10-20 seconds for all the commands to run through, but the more fans you have the longer it will take.
+
+-   There's now an REST API available which you can use for scriptings and such
 
 ## Important Information
 
 -   There is **no authorization system** put in place, if you plan to expose this publicly, you must use some sort of authentication proxy such as [Authelia](https://github.com/authelia/authelia) which I have a guide for Kubernetes [here](https://github.com/DavidIlie/kubernetes-setup/tree/master/8%20-%20authelia). It wouldn't be fun for someone to put your server fans at 100% whilst you're not home.
+
+## REST API
+
+The controller now exposes a small REST API for automation or scripting:
+
+-   `GET /api/fans` — retrieves the current iLO fan data payload.
+-   `POST /api/fans` — sets fan speeds using a JSON body like `{ "fans": [32, 32, 32, 32, 32, 32, 32, 32] }` (values are percentages).
+-   `POST /api/fans/unlock` — unlocks global fan control.
+
+Example usage with `curl`:
+
+```bash
+BASE_URL="http://ilo-fan-controller-ip.local:3000"
+```
+
+### - Unlock manual control
+```bash
+curl -s -X POST "$BASE_URL/api/fans/unlock" | jq .
+```
+
+### - Set all three fans to 40%
+```bash
+curl -s -X POST "$BASE_URL/api/fans" \
+  -H 'Content-Type: application/json' \
+  -d '{"fans":[40,40,40]}' | jq .
+```
+
+### - Read back actual values
+```bash
+curl -s "$BASE_URL/api/fans" | jq .
+```
 
 ## Installation
 
@@ -24,9 +57,13 @@
 
 ## Docker
 
-This resposity contains a docker image which can easily be pulled down to use in a Docker/Kubernetes environment. Modify the comamnd below with **your** values regarding your setup and then you can run the command:
+This repository contains a docker image which can easily be pulled down to use in a Docker/Kubernetes environment. Modify the command below with **your** values regarding your setup and then you can run the command:
 
-```shell
+```bash
+git clone https://github.com/0n1cOn3/ilo4-fan-controller
+docker build -t local/ilo4-fan-controller:latest-local .
+
+```bash
 docker run -d \
   --name=ilo4-fan-controller \
   -p 3000:3000 \
@@ -34,7 +71,7 @@ docker run -d \
   -e ILO_PASSWORD='*your password**' \
   -e ILO_HOST='*the ip address you access ILO on*' \
   --restart unless-stopped \
-  ghcr.io/davidilie/ilo4-fan-controller:latest
+  local/ilo4-fan-controller:latest-local
 ```
 
 You can modify this to work with Rancher, Portainer, etc.
