@@ -57,7 +57,7 @@ curl -s "$BASE_URL/api/fans" | jq .
 
 ## Docker
 
-This resposity contains a docker image which can easily be pulled down to use in a Docker/Kubernetes environment. Modify the comamnd below with **your** values regarding your setup and then you can run the command:
+This repository contains a docker image which can easily be pulled down to use in a Docker/Kubernetes environment. Modify the command below with **your** values regarding your setup and then you can run the command:
 
 ```bash
 git clone https://github.com/0n1cOn3/ilo4-fan-controller
