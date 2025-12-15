@@ -110,7 +110,7 @@ class FanTUI:
             self.stdscr.refresh()
             return
 
-        # Titel
+        # Title
         title = "iLO Fan Controller"
         subtitle = f"{self.base_url}"
         title_x = max(0, (w - len(title)) // 2)
