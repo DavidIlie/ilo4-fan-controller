@@ -62,7 +62,6 @@ This repository contains a docker image which can easily be pulled down to use i
 ```bash
 git clone https://github.com/DavidIlie/ilo4-fan-controller
 docker build -t ghcr.io/davidilie/ilo4-fan-controller:latest .
-
 ```bash
 docker run -d \
   --name=ilo4-fan-controller \
