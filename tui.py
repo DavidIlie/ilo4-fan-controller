@@ -23,7 +23,7 @@ class FanTUI:
         self.status = "Loading fan data from API..."
         self.num_fans = 0
 
-        # Indication for the „Controls“
+        # Indication for the "Controls"
         self.IDX_EDIT_ALL = 0
         self.IDX_QUIET = 1
         self.IDX_NORMAL = 2
