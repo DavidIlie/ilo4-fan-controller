@@ -30,9 +30,9 @@ The controller now exposes a small REST API for automation or scripting:
 
 Example usage with `curl`:
 
-#!/usr/bin/env bash
+```bash
 BASE_URL="http://ilo-fan-controller-ip.local:3000"
-
+```
 
 ### - Unlock manual control
 ```bash
