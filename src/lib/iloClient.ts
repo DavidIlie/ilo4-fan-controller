@@ -2,7 +2,7 @@ import base64 from "base-64";
 import { Agent as UndiciAgent } from "undici";
 import { NodeSSH } from "node-ssh";
 import { changeFanSpeedSchema, ChangeFanSpeedInput } from "../schemas/changeFanSpeed";
-import type { FanObject } from "../types/Fan";
+import type { FanObject, TemperatureObject, TemperatureSummary } from "../types/Fan";
 
 const httpsDispatcher = new UndiciAgent({
     connect: {
@@ -29,6 +29,7 @@ const ensureEnv = () => {
 
 type IloThermalPayload = {
     Fans?: FanObject[];
+    Temperatures?: TemperatureObject[];
 };
 
 export const fetchFans = async (): Promise<FanObject[]> => {
@@ -54,6 +55,52 @@ export const fetchFans = async (): Promise<FanObject[]> => {
 
     const payload = (await response.json()) as IloThermalPayload;
     return payload.Fans ?? [];
+};
+
+export const fetchTemperatures = async (): Promise<TemperatureSummary> => {
+    ensureEnv();
+
+    const requestInit: RequestInit & { dispatcher: UndiciAgent } = {
+        headers: {
+            Authorization: `Basic ${base64.encode(
+                `${process.env.ILO_USERNAME}:${process.env.ILO_PASSWORD}`
+            )}`,
+        },
+        dispatcher: httpsDispatcher,
+    };
+
+    const response = await fetch(
+        `https://${process.env.ILO_HOST}/redfish/v1/chassis/1/Thermal`,
+        requestInit
+    );
+
+    if (!response.ok) {
+        throw new Error(`Unable to fetch temperature data (${response.status})`);
+    }
+
+    const payload = (await response.json()) as IloThermalPayload;
+    const temps = (payload.Temperatures ?? []).filter(
+        (t) => t.Status.State !== "Absent"
+    );
+
+    const findByNumber = (num: number): number | null => {
+        const sensor = temps.find((t) => t.Number === num);
+        return sensor ? sensor.CurrentReading : null;
+    };
+
+    return {
+        cpu1: findByNumber(2),
+        cpu2: findByNumber(3),
+        hdMax: findByNumber(8),
+        inletAmbient: findByNumber(1),
+        all: temps,
+    };
+};
+
+export const setAllFanSpeed = async (speed: number, fanCount: number): Promise<void> => {
+    const clamped = Math.min(100, Math.max(10, Math.round(speed)));
+    const fans = Array(fanCount).fill(clamped);
+    await setFanSpeeds({ fans });
 };
 
 const withSshConnection = async (callback: (ssh: NodeSSH) => Promise<void>) => {

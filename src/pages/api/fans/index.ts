@@ -5,6 +5,7 @@ import {
     changeFanSpeedSchema,
     type ChangeFanSpeedInput,
 } from "../../../schemas/changeFanSpeed";
+import { getFanController } from "../../../lib/fanController";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     if (req.method === "GET") {
@@ -23,6 +24,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 abortEarly: false,
                 stripUnknown: true,
             });
+
+            // Switch to manual mode when fans are set directly
+            const controller = getFanController();
+            if (controller.getMode() === "auto") {
+                await controller.setMode("manual");
+            }
+
             await setFanSpeeds(body);
             return res.status(200).json({ message: "ok" });
         } catch (error) {

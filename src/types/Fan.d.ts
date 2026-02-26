@@ -20,3 +20,24 @@ export interface FanObject {
     Status: Status;
     Units: string;
 }
+
+export interface TemperatureObject {
+    CurrentReading: number;
+    Name: string;
+    Number: number;
+    Oem: Oem;
+    PhysicalContext: string;
+    ReadingCelsius: number;
+    Status: Status;
+    Units: string;
+    UpperThresholdCritical: number;
+    UpperThresholdFatal: number;
+}
+
+export interface TemperatureSummary {
+    cpu1: number | null;
+    cpu2: number | null;
+    hdMax: number | null;
+    inletAmbient: number | null;
+    all: TemperatureObject[];
+}

@@ -16,7 +16,7 @@
         "react-awesome-reveal": "^4.2.6",
         "react-dom": "^18.3.1",
         "react-hot-toast": "^2.4.1",
-        "undici": "^1.0.0.",
+        "undici": "^7.0.0",
         "yup": "^1.4.0"
     },
     "devDependencies": {
