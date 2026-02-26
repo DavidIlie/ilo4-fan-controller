@@ -16,6 +16,35 @@
 
 -   There's now an REST API available which you can use for scriptings and such
 
+## Automatic Fan Curve
+
+The controller supports an **automatic thermal fan curve** that polls iLO temperature sensors every 15 seconds and adjusts fan speeds accordingly. It starts in auto mode by default.
+
+The fan speed is calculated as `max(cpu_curve, hd_curve, ambient_floor, 25%)` using three sensor-specific curves:
+
+-   **CPU Curve** — ramps from 25% at ≤40°C to 100% at ≥70°C
+-   **HD Curve** — ramps from 25% at ≤42°C to 100% at ≥60°C (exponential, aggressive near the 60°C caution threshold)
+-   **Ambient Floor** — raises the minimum fan speed based on inlet air temperature (25% at ≤22°C up to 60% at ≥40°C)
+
+Features:
+-   **Linear interpolation** between curve points for smooth transitions
+-   **2°C hysteresis** on the down-side to prevent fan speed oscillation
+-   **Rate limiting** of ±5% per cycle (except emergency ramp to 100%)
+-   **Safety fallback** — ramps fans to 80% after 3 consecutive sensor read failures
+-   **Manual override** — switch to manual mode via the web UI or TUI at any time; setting fans manually auto-switches to manual mode
+
+The web dashboard shows live temperatures with color coding, the current auto mode decision, and an interactive SVG fan curve chart with real-time operating points.
+
+### Configuration
+
+You can optionally configure the fan curve via environment variables:
+
+```env
+FAN_CURVE_POLL_INTERVAL=15    # seconds between temperature checks
+FAN_CURVE_MIN_SPEED=25        # minimum fan speed percentage
+FAN_CURVE_MODE=auto           # startup mode: auto or manual
+```
+
 ## Important Information
 
 -   There is **no authorization system** put in place, if you plan to expose this publicly, you must use some sort of authentication proxy such as [Authelia](https://github.com/authelia/authelia) which I have a guide for Kubernetes [here](https://github.com/DavidIlie/kubernetes-setup/tree/master/8%20-%20authelia). It wouldn't be fun for someone to put your server fans at 100% whilst you're not home.
@@ -25,8 +54,12 @@
 The controller now exposes a small REST API for automation or scripting:
 
 -   `GET /api/fans` — retrieves the current iLO fan data payload.
--   `POST /api/fans` — sets fan speeds using a JSON body like `{ "fans": [32, 32, 32, 32, 32, 32, 32, 32] }` (values are percentages).
+-   `POST /api/fans` — sets fan speeds using a JSON body like `{ "fans": [32, 32, 32, 32, 32, 32, 32, 32] }` (values are percentages). Automatically switches to manual mode.
 -   `POST /api/fans/unlock` — unlocks global fan control.
+-   `GET /api/temps` — returns current temperature readings from all sensors (CPU 1, CPU 2, HD Max, Inlet Ambient).
+-   `GET /api/mode` — returns current mode (`auto`/`manual`), fan curve decision, and last poll timestamp.
+-   `POST /api/mode` — switch mode with `{ "mode": "auto" }` or `{ "mode": "manual" }`.
+-   `GET /api/curve` — returns the fan curve definitions (for visualization).
 
 Example usage with `curl`:
 
