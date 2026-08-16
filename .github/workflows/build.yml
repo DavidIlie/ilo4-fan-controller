@@ -8,7 +8,7 @@ on:
 jobs:
     build:
         name: "Build App"
-        runs-on: ubuntu-latest
+        runs-on: davidapps-linux-x64
         steps:
             - name: "Build:checkout"
               uses: actions/checkout@v2
@@ -24,9 +24,11 @@ jobs:
                   docker push ghcr.io/davidilie/ilo4-fan-controller
     deploy_self:
         name: "Deploy"
-        runs-on: ubuntu-latest
+        runs-on: davidapps-linux-x64
         needs: [build]
         steps:
+            - name: "Set up kubectl"
+              uses: azure/setup-kubectl@v4
             - name: "Set Kubernetes Context"
               uses: Azure/k8s-set-context@v1
               with:
