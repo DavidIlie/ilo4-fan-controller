@@ -5,6 +5,10 @@ on:
         branches:
             - master
 
+permissions:
+    contents: read
+    packages: write
+
 jobs:
     build:
         name: "Build App"
@@ -17,7 +21,7 @@ jobs:
               with:
                   registry: ghcr.io
                   username: DavidIlie
-                  password: ${{ secrets.GHCR_PASSWORD }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
             - name: Build and publish Docker image
               run: |
                   docker build -t ghcr.io/davidilie/ilo4-fan-controller .
