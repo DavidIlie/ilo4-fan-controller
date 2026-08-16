@@ -1,16 +1,19 @@
-FROM node:alpine AS deps
+FROM node:24-alpine AS node-base
+RUN corepack enable && corepack install --global yarn@1.22.22
+
+FROM node-base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
 
-FROM node:alpine AS builder
+FROM node-base AS builder
 WORKDIR /app
 COPY . .
 COPY --from=deps /app/node_modules ./node_modules
 RUN yarn build
 
-FROM node:alpine AS runner
+FROM node-base AS runner
 WORKDIR /app
 
 ARG APP_ENV=production
