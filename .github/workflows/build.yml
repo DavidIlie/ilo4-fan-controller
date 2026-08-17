@@ -14,7 +14,7 @@ jobs:
             contents: read
             packages: write
         name: "Build App"
-        runs-on: davidapps-linux-x64
+        runs-on: ubuntu-24.04
         steps:
             - name: "Build:checkout"
               uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -36,7 +36,7 @@ jobs:
                   cache-to: type=gha,mode=max,scope=ilo4-fan-controller
     deploy_self:
         name: "Deploy"
-        runs-on: davidapps-linux-x64
+        runs-on: ubuntu-24.04
         needs: [build]
         steps:
             - name: "Set up kubectl"
